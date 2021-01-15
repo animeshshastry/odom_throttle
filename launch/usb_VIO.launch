@@ -1,9 +1,30 @@
 <launch>
 
-  <include file="$(find realsense2_camera)/launch/rs_t265.launch" />
+	<include file="$(find realsense2_camera)/launch/rs_t265.launch" />
 
-  <node name="odom_throttle" type="odom_throttle_node" pkg="odom_throttle" output="screen" />
+	<node name="odom_throttle" type="odom_throttle_node" pkg="odom_throttle" output="screen" />
 
-  <node name="rosserial_python" type="serial_node.py" pkg="rosserial_python" output="screen" args="_port:=/dev/ttyACM0"/>
+	<!-- <node name="topic_tools" type="drop" pkg="topic_tools" output="screen" args="intopic:=/camera/odom/sample X:=1 Y:=2 outtopic:=VIO_odom"/> -->
+	<!-- <node name="topic_tools" type="throttle" pkg="topic_tools" output="screen" args="messages /camera/odom/sample 100 VIO_odom"/> -->
+
+	<node name="rosserial_python" type="serial_node.py" pkg="rosserial_python" output="screen" args="_port:=/dev/ttyACM0 _baud:=500000"/>
+
+<!-- 	<node pkg="topic_tools" type="relay_field"
+	    name="position_relayer"
+	    args="/camera/odom/sample /VIO_pos geometry_msgs/Point
+	        '{
+	        x: m.pose.pose.position.x, 
+	        y: m.pose.pose.position.y,
+	        z: m.pose.pose.position.z,
+	    }' "/>
+
+	<node pkg="topic_tools" type="relay_field"
+	    name="velocity_relayer"
+	    args="/camera/odom/sample /VIO_vel geometry_msgs/Vector3
+	        '{
+	        x: m.twist.twist.linear.x, 
+	        y: m.twist.twist.linear.y,
+	        z: m.twist.twist.linear.z,
+	    }' "/> -->
 
 </launch>
