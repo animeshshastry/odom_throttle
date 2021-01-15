@@ -21,11 +21,12 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "VIO_odom");
   ros::NodeHandle n;
   // ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("VIO_odom", 1000);
-  ros::Publisher pos_pub = n.advertise<geometry_msgs::Point>("VIO_pos", 1000);
-  ros::Publisher vel_pub = n.advertise<geometry_msgs::Vector3>("VIO_vel", 1000);
-  ros::Subscriber sub = n.subscribe("/camera/odom/sample", 1000, odom_callback);
+  ros::Publisher pos_pub = n.advertise<geometry_msgs::Point>("VIO_pos", 0);
+  ros::Publisher vel_pub = n.advertise<geometry_msgs::Vector3>("VIO_vel", 0);
+  ros::Subscriber sub = n.subscribe("/camera/odom/sample", 0, odom_callback);
 
   ros::Rate loop_rate(100);
+  // ros::AsyncSpinner spinner(2); // Use 2 threads
 
   while (ros::ok())
   {
@@ -33,9 +34,11 @@ int main(int argc, char **argv)
     // ROS_INFO("%s", msg.data.c_str());
 
     // odom_pub.publish(odom_msg);
+
+    ros::spinOnce();
     pos_pub.publish(VIO_pos);
     vel_pub.publish(VIO_vel);
-    ros::spinOnce();
+	// // spinner.start();
 
     loop_rate.sleep();
   }
