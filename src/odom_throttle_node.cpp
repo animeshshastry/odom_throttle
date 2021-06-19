@@ -14,6 +14,7 @@ double RTe3_1, RTe3_2, RTe3_3;
 // nav_msgs::Odometry odom_msg;
 geometry_msgs::Point VIO_pos;
 geometry_msgs::Vector3 VIO_vel;
+geometry_msgs::Vector3 VIO_Euler;
 
 void acc_callback(const sensor_msgs::Imu::ConstPtr& msg)
 {
@@ -41,6 +42,9 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr& msg)
 	RTe3_2 = 2.0*(qy*qz + qw*qx);
 	RTe3_3 = 1.0 - 2.0*(qx*qx + qy*qy);
 
+	VIO_Euler.x = atan2(2 * (qw * qx + qy * qz), 1.0f - 2 * (qx * qx + qy * qy));
+	VIO_Euler.y = asin(2.0f * (qw * qy - qz * qx));
+	VIO_Euler.z = atan2(2 * (qx * qy + qw * qz), 1.0f - 2 * (qy * qy + qz * qz));
 }
 
 void propagate(){
@@ -65,6 +69,7 @@ int main(int argc, char **argv)
 	// ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("VIO_odom", 1000);
 	ros::Publisher pos_pub = n.advertise<geometry_msgs::Point>("VIO_pos", 1);
 	ros::Publisher vel_pub = n.advertise<geometry_msgs::Vector3>("VIO_vel", 1);
+	ros::Publisher Euler_pub = n.advertise<geometry_msgs::Vector3>("VIO_Euler", 1);
 	ros::Subscriber odom_sub = n.subscribe("/camera/odom/sample", 1, odom_callback);
 	ros::Subscriber acc_sub = n.subscribe("/camera/accel/sample", 1, acc_callback);
 
@@ -82,6 +87,7 @@ int main(int argc, char **argv)
 		propagate();
 		pos_pub.publish(VIO_pos);
 		vel_pub.publish(VIO_vel);
+		Euler_pub.publish(VIO_Euler);
 		// // spinner.start();
 
 		// ros::Duration(0.002).sleep(); // sleep
