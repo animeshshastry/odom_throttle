@@ -53,9 +53,9 @@ void propagate(){
 	dt = current_time - prev_time;
 	prev_time = current_time;
 
-	VIO_pos.x += VIO_vel.x*dt;
-	VIO_pos.y += VIO_vel.y*dt;
-	VIO_pos.z += VIO_vel.z*dt;
+	//VIO_pos.x += VIO_vel.x*dt;
+	//VIO_pos.y += VIO_vel.y*dt;
+	//VIO_pos.z += VIO_vel.z*dt;
 
 	VIO_vel.x += accx*dt;
 	VIO_vel.y += accy*dt;
